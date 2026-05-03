@@ -1,0 +1,45 @@
+# Зависимости
+node_modules
+.pnpm-store
+
+# Next.js
+.next
+out
+
+# Сборки
+build
+dist
+
+# Логи
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Окружение и секреты
+.env
+.env.*
+!.env.example
+
+# Платформы деплоя
+.vercel
+.netlify
+
+# IDE
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Тесты и кеши
+coverage
+.eslintcache
+.turbo
+*.tsbuildinfo
+
+# Локальные настройки Claude Code (личное)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
