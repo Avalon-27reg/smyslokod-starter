@@ -27,8 +27,11 @@
 
 ```bash
 pnpm install
-pnpm dev          # http://localhost:3000
+bash scripts/install-hooks.sh   # один раз: включает защиту main от force-push
+pnpm dev                        # http://localhost:3000
 ```
+
+> Windows: вместо `bash scripts/install-hooks.sh` используйте `pwsh scripts/install-hooks.ps1`.
 
 Затем:
 

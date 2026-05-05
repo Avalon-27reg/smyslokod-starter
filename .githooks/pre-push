@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+# .githooks/pre-push - block force-push and deletion of protected branches
+# Activated via: git config core.hooksPath .githooks
+# (already done by scripts/install-hooks.sh / .ps1)
+
+remote="$1"
+zero="0000000000000000000000000000000000000000"
+protected_pattern="^refs/heads/(main|master)$"
+
+while read local_ref local_sha remote_ref remote_sha; do
+  if echo "$remote_ref" | grep -Eq "$protected_pattern"; then
+    if [ "$local_sha" = "$zero" ]; then
+      echo "" >&2
+      echo "[pre-push] BLOCKED: deleting $remote_ref is forbidden." >&2
+      echo "[pre-push] If you really want to delete the protected branch, override with:" >&2
+      echo "[pre-push]   git push --no-verify $remote :$remote_ref" >&2
+      echo "" >&2
+      exit 1
+    fi
+    if [ "$remote_sha" != "$zero" ]; then
+      if ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+        echo "" >&2
+        echo "[pre-push] BLOCKED: non-fast-forward (force) push to $remote_ref." >&2
+        echo "[pre-push] Local HEAD does not contain remote HEAD - this would rewrite history." >&2
+        echo "[pre-push] If this is truly what you want, override with:" >&2
+        echo "[pre-push]   git push --no-verify $remote $local_ref:$remote_ref" >&2
+        echo "" >&2
+        exit 1
+      fi
+    fi
+  fi
+done
+
+exit 0
