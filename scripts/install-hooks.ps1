@@ -8,4 +8,5 @@ git config core.hooksPath .githooks
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "[OK] Git hooks path set to .githooks/" -ForegroundColor Green
-Write-Host "[OK] pre-push hook will block force-push and deletion of main/master." -ForegroundColor Green
+Write-Host "[OK] pre-push  - blocks force-push and deletion of main/master." -ForegroundColor Green
+Write-Host "[OK] pre-commit - blocks commits with .env / secret-like content." -ForegroundColor Green

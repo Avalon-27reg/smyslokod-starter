@@ -10,4 +10,5 @@ git config core.hooksPath .githooks
 chmod +x .githooks/* 2>/dev/null || true
 
 echo "[OK] Git hooks path set to .githooks/"
-echo "[OK] pre-push hook will block force-push and deletion of main/master."
+echo "[OK] pre-push  - blocks force-push and deletion of main/master."
+echo "[OK] pre-commit - blocks commits with .env / secret-like content."
