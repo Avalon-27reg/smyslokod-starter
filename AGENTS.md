@@ -38,7 +38,7 @@
 | Правила деплоя             | [.claude/rules/deployment.md](./.claude/rules/deployment.md) |
 | Скиллы Claude Code         | [.claude/skills/README.md](./.claude/skills/README.md) |
 | Архитектура                | [docs/architecture/overview.md](./docs/architecture/overview.md) |
-| Готовые промпты            | [docs/prompts/](./docs/prompts/)         |
+| Готовые промпты            | [docs/prompts/INDEX.md](./docs/prompts/INDEX.md) |
 
 ## Если файл противоречит CLAUDE.md
 

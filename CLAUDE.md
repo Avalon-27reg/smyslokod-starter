@@ -108,7 +108,7 @@ scripts/                # doctor / preflight (sh + ps1)
 - Правила UI — `.claude/rules/ui-design.md`
 - Правила деплоя — `.claude/rules/deployment.md`
 - Скиллы — `.claude/skills/` (project-bootstrap, diagnose, tdd, grill-me)
-- Готовые промпты — `docs/prompts/`
+- Готовые промпты — `docs/prompts/INDEX.md`
 - Архитектура — `docs/architecture/overview.md`
 - Решения (ADR) — `docs/decisions/`
 
