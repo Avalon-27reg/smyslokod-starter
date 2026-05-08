@@ -6,7 +6,7 @@
 ## Главное в одном экране
 
 1. Это шаблон для смысло-кодинга. Бизнес-смысл живёт в `business/`, текущая работа — в `plans/`, итоги — в `retrospectives/`.
-2. Стек: Next.js 15 + TypeScript + Tailwind + shadcn/ui + pnpm.
+2. Стек **не зашит**. Шаблон стек-агностичен. Стек выбирается на старте через скилл `project-bootstrap` или явно пользователем. Если в `CLAUDE.md` раздел «2. Стек» ещё указывает на «не переписан» — значит проект только что развёрнут.
 3. Перед любой задачей читай `CLAUDE.md` и нужные файлы из `business/INDEX.md` (карта). Не грузи business/ целиком.
 4. На крупную фичу — план в `plans/YYYY-MM-DD-имя.md` по `plans/TEMPLATE.md`. **Один план = одна функция.** Обязательны: «10 причин провала», Challenge Loop, Self-Audit.
 5. В конце сессии — `retrospectives/YYYY-MM-DD-имя.md` по `retrospectives/TEMPLATE.md`.

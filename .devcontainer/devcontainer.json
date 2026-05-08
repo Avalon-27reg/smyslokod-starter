@@ -1,26 +1,16 @@
 {
   "name": "smyslokod-starter",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "forwardPorts": [3000],
-  "portsAttributes": {
-    "3000": {
-      "label": "Next.js dev",
-      "onAutoForward": "notify"
-    }
-  },
-  "postCreateCommand": "corepack enable && corepack prepare pnpm@10.0.0 --activate && pnpm install --frozen-lockfile || pnpm install",
-  "remoteUser": "node",
+  "postCreateCommand": "bash scripts/install-hooks.sh",
+  "remoteUser": "vscode",
   "customizations": {
     "vscode": {
       "extensions": [
         "anthropic.claude-code",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss",
         "eamodio.gitlens",
         "yzhang.markdown-all-in-one",
         "bierner.markdown-mermaid"

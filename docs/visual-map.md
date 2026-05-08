@@ -4,30 +4,29 @@
 
 ## 1. Архитектура проекта
 
+> Шаблонная схема — обновите после выбора стека под свою архитектуру (фреймворк, БД, внешние интеграции).
+
 ```mermaid
 flowchart LR
     User[👤 Пользователь]
-    Browser[🌐 Браузер]
-    NextEdge[Next.js<br/>Edge / Node]
-    RSC[Server<br/>Components]
-    APIRoute[API Routes /<br/>Server Actions]
-    DB[(БД<br/>Postgres)]
-    Cache[(Redis)]
+    Client[Клиент<br/>браузер / mobile / Telegram]
+    App[Приложение<br/>Next.js / FastAPI / aiogram / ...]
+    Logic[Бизнес-логика]
+    DB[(База данных<br/>Postgres / SQLite / ...)]
+    Cache[(Кеш<br/>Redis / опционально)]
     LLM[LLM API<br/>Anthropic / OpenAI]
     Pay[Платёжный<br/>провайдер]
-    Analytics[Аналитика<br/>Я.Метрика]
+    Analytics[Аналитика<br/>Я.Метрика / Plausible]
 
-    User --> Browser
-    Browser <-->|HTTP / RSC| NextEdge
-    NextEdge --> RSC
-    NextEdge --> APIRoute
-    RSC -->|SQL / ORM| DB
-    APIRoute -->|SQL / ORM| DB
-    APIRoute --> Cache
-    APIRoute -->|HTTPS| LLM
-    APIRoute -->|HTTPS| Pay
-    Pay -.->|webhook| APIRoute
-    Browser -.->|JS| Analytics
+    User --> Client
+    Client <-->|HTTP / WebSocket / Bot API| App
+    App --> Logic
+    Logic -->|SQL / ORM| DB
+    Logic --> Cache
+    Logic -->|HTTPS| LLM
+    Logic -->|HTTPS| Pay
+    Pay -.->|webhook| App
+    Client -.->|JS / SDK| Analytics
 ```
 
 ## 2. Путь пользователя

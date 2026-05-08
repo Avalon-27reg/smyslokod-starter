@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# scripts/doctor.sh — диагностика окружения для smyslokod-starter
+# scripts/doctor.sh — диагностика smyslokod-starter (стек-агностично)
 # Использование: bash scripts/doctor.sh
 
 set -u
@@ -9,87 +9,82 @@ RED="\033[0;31m"
 YELLOW="\033[0;33m"
 RESET="\033[0m"
 
-ok=0
-fail=0
-warn=0
+ok=0; fail=0; warn=0
 
-check() {
-  local label="$1"
-  local cmd="$2"
-  if eval "$cmd" >/dev/null 2>&1; then
-    printf "  ${GREEN}✓${RESET} %s\n" "$label"
-    ok=$((ok+1))
+check_cmd() {
+  local label="$1"; local cmd="$2"
+  if command -v "$cmd" >/dev/null 2>&1; then
+    printf "  ${GREEN}✓${RESET} %s\n" "$label"; ok=$((ok+1))
   else
-    printf "  ${RED}✗${RESET} %s\n" "$label"
-    fail=$((fail+1))
+    printf "  ${RED}✗${RESET} %s (не найдено в PATH)\n" "$label"; fail=$((fail+1))
   fi
 }
 
-check_file() {
-  local label="$1"
-  local path="$2"
-  if [ -f "$path" ] || [ -d "$path" ]; then
-    printf "  ${GREEN}✓${RESET} %s (%s)\n" "$label" "$path"
-    ok=$((ok+1))
+check_path() {
+  local label="$1"; local path="$2"
+  if [ -e "$path" ]; then
+    printf "  ${GREEN}✓${RESET} %s\n" "$label"; ok=$((ok+1))
   else
-    printf "  ${RED}✗${RESET} %s (отсутствует: %s)\n" "$label" "$path"
-    fail=$((fail+1))
+    printf "  ${RED}✗${RESET} %s (отсутствует: %s)\n" "$label" "$path"; fail=$((fail+1))
   fi
 }
 
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
 echo "smyslokod-starter doctor"
-echo "Корень проекта: $ROOT"
+echo "Корень: $ROOT"
 echo ""
 
-echo "▸ Инструменты"
-check "node установлен" "command -v node"
-check "pnpm установлен" "command -v pnpm"
-check "git установлен" "command -v git"
+echo "▸ Базовые инструменты"
+check_cmd "git" "git"
 
-if command -v node >/dev/null 2>&1; then
-  NODE_MAJOR=$(node -p "process.versions.node.split('.')[0]")
-  if [ "$NODE_MAJOR" -lt 20 ]; then
-    printf "  ${YELLOW}!${RESET} Node %s — рекомендуем ≥ 20\n" "$(node -v)"
-    warn=$((warn+1))
-  else
-    printf "  ${GREEN}✓${RESET} Node $(node -v)\n"
-    ok=$((ok+1))
-  fi
+echo ""
+echo "▸ Методология"
+check_path "CLAUDE.md" "CLAUDE.md"
+check_path "AGENTS.md" "AGENTS.md"
+check_path "START_HERE.md" "START_HERE.md"
+check_path "README.md" "README.md"
+check_path "LICENSE" "LICENSE"
+check_path "business/INDEX.md" "business/INDEX.md"
+check_path "plans/TEMPLATE.md" "plans/TEMPLATE.md"
+check_path "retrospectives/TEMPLATE.md" "retrospectives/TEMPLATE.md"
+check_path ".claude/settings.json" ".claude/settings.json"
+check_path ".claude/rules/" ".claude/rules"
+check_path ".claude/agents/" ".claude/agents"
+check_path ".claude/skills/" ".claude/skills"
+check_path "docs/prompts/INDEX.md" "docs/prompts/INDEX.md"
+
+echo ""
+echo "▸ Git-хуки"
+HOOKS_PATH=$(git config --get core.hooksPath 2>/dev/null || echo "")
+if [ "$HOOKS_PATH" = ".githooks" ]; then
+  printf "  ${GREEN}✓${RESET} core.hooksPath = .githooks (хуки активны)\n"; ok=$((ok+1))
+else
+  printf "  ${YELLOW}!${RESET} core.hooksPath не выставлен — выполните: bash scripts/install-hooks.sh\n"; warn=$((warn+1))
 fi
-
-echo ""
-echo "▸ Структура проекта"
-check_file "package.json" "package.json"
-check_file ".env.example" ".env.example"
-check_file ".gitignore" ".gitignore"
-check_file "CLAUDE.md" "CLAUDE.md"
-check_file "AGENTS.md" "AGENTS.md"
-check_file "START_HERE.md" "START_HERE.md"
-check_file "business/INDEX.md" "business/INDEX.md"
-check_file "plans/TEMPLATE.md" "plans/TEMPLATE.md"
-check_file "retrospectives/TEMPLATE.md" "retrospectives/TEMPLATE.md"
-check_file ".claude/settings.json" ".claude/settings.json"
-check_file ".claude/rules/" ".claude/rules"
-check_file ".claude/agents/" ".claude/agents"
+check_path "pre-push hook" ".githooks/pre-push"
+check_path "pre-commit hook" ".githooks/pre-commit"
 
 echo ""
 echo "▸ Безопасность"
 if [ -f ".env" ]; then
-  printf "  ${YELLOW}!${RESET} .env существует — убедитесь, что он в .gitignore (он там)\n"
-  warn=$((warn+1))
+  printf "  ${YELLOW}!${RESET} .env существует — убедитесь, что он в .gitignore (он там)\n"; warn=$((warn+1))
 else
-  printf "  ${GREEN}✓${RESET} .env отсутствует (создайте локально из .env.example)\n"
-  ok=$((ok+1))
+  printf "  ${GREEN}✓${RESET} .env отсутствует (создайте локально из .env.example при необходимости)\n"; ok=$((ok+1))
 fi
 
-if [ -d "node_modules" ]; then
-  printf "  ${GREEN}✓${RESET} node_modules установлен\n"
-  ok=$((ok+1))
+echo ""
+echo "▸ Стек проекта (опционально)"
+if [ -f "package.json" ]; then
+  printf "  ${GREEN}i${RESET} package.json найден — Node-стек установлен пользователем\n"
+elif [ -f "pyproject.toml" ] || [ -f "requirements.txt" ]; then
+  printf "  ${GREEN}i${RESET} Python-стек найден\n"
+elif [ -f "Cargo.toml" ]; then
+  printf "  ${GREEN}i${RESET} Rust-стек найден\n"
+elif [ -f "go.mod" ]; then
+  printf "  ${GREEN}i${RESET} Go-стек найден\n"
 else
-  printf "  ${YELLOW}!${RESET} node_modules нет — запустите: pnpm install\n"
-  warn=$((warn+1))
+  printf "  ${YELLOW}i${RESET} Стек ещё не выбран — запустите bootstrap из START_HERE.md\n"
 fi
 
 echo ""

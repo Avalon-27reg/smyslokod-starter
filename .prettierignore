@@ -1,8 +1,0 @@
-node_modules
-.next
-build
-dist
-.vercel
-pnpm-lock.yaml
-*.min.*
-public

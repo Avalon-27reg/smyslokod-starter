@@ -78,15 +78,15 @@
 
 ## После того как агент закончит
 
-Проверьте сами:
+Запустите доктор — он проверит что методология на месте и git-хуки активированы:
 
 ```bash
-pnpm install
-pnpm dev
-scripts/doctor.ps1   # Windows
+pwsh scripts/doctor.ps1   # Windows
 # или
-scripts/doctor.sh    # macOS / Linux
+bash scripts/doctor.sh    # macOS / Linux / WSL / Git Bash
 ```
+
+Если в шаге Auto-detect Claude предложил поставить какой-то стек (Next.js / Python / Telegram-бот / другое) и вы согласились — выполните установочные команды, которые он показал, в обычном терминале.
 
 Если что-то не запускается — откройте новую сессию Claude Code и пришлите ошибку.
 

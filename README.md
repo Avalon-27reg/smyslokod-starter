@@ -1,179 +1,147 @@
 # smyslokod-starter
 
-Стартовый шаблон для **смысло-кодинга** — методологии, при которой смысл проекта живёт в репозитории отдельно от кода. Бизнес-контекст, цели и правила лежат в markdown-файлах, которые читает Claude Code, прежде чем что-либо менять.
+Стартовый шаблон для **смысло-кодинга** — методологии, при которой смысл проекта живёт в репозитории отдельно от кода. Бизнес-контекст, цели, правила и готовые промпты лежат в markdown-файлах, которые читает Claude Code (и любой другой AI-агент), прежде чем что-либо менять.
 
-Скачайте, откройте в VS Code, вставьте промпт из [START_HERE.md](./START_HERE.md) — Claude Code сам адаптирует шаблон под вашу идею.
+**Стек-агностично.** Шаблон не привязан к Next.js / Python / боту / mobile. Вы выбираете стек на старте, и Claude помогает его поставить — а методология уже на месте.
 
 ---
 
-## Что это и для кого
+## Что внутри
 
-**Это:** заготовка `Next.js 15 + TypeScript + Tailwind + shadcn/ui` плюс полная файловая структура «мозга» проекта для работы с Claude Code.
+| Папка / файл | Зачем |
+| --- | --- |
+| `business/` | «Мозг» проекта: компания, продукты, аудитория, цели, экономика, маркетинг, активы. Карта в `business/INDEX.md` |
+| `plans/` | Один план = одна функция. Шаблон с блоками «10 причин провала», Challenge Loop, Self-Audit, Impact Analysis |
+| `retrospectives/` | Итог каждой сессии — память для будущих |
+| `.claude/rules/` | Правила: безопасность, git, планирование, принципы кодинга, UI, бизнес-контекст, деплой |
+| `.claude/agents/` | 5 субагентов: researcher, architect, critic, qa-tester, ux-designer |
+| `.claude/skills/` | 4 скилла: project-bootstrap (3 режима), diagnose, tdd, grill-me |
+| `.claude/settings.json` | Permissions: deny на чтение `.env`, опасные `rm -rf` / force-push, ask на коммиты и push |
+| `.githooks/` | pre-push (защита main от force-push) и pre-commit (блок коммита `.env` и API-токенов) |
+| `docs/prompts/` | 14 готовых промптов под типовые сценарии. Карта в `docs/prompts/INDEX.md` |
+| `docs/deployment/` | Инструкции по Vercel / Railway / Amvera (ФЗ-152) |
+| `scripts/` | doctor (диагностика окружения) + install-hooks |
+| `START_HERE.md` | Главный промпт для первого запуска шаблона |
+| `CLAUDE.md` / `AGENTS.md` | Карта проекта для Claude Code и других агентов |
+| `LICENSE` | MIT |
 
-**Для кого:**
+---
 
-- Основатель / соло-разработчик, который хочет, чтобы AI-агент не «кодил вслепую», а действовал в рамках бизнес-контекста.
+## Кому подходит
+
+- Основатель / соло-разработчик, которому нужно, чтобы AI-агент действовал в рамках бизнес-контекста.
 - Команда, которая хочет фиксировать бизнес-знания в Git, а не в Notion.
 - Тот, кто пробовал Cursor / Claude Code и устал объяснять одно и то же в каждой сессии.
 
 **Это НЕ:**
 
 - Готовая SaaS-платформа.
-- Аналог create-next-app — здесь почти нет кода, основная ценность в файлах `business/`, `plans/`, `.claude/`.
+- Аналог `create-next-app` — здесь нет привязки к стеку. Только методология и обвязка.
 
 ---
 
 ## Быстрый старт
 
 ```bash
-pnpm install
-bash scripts/install-hooks.sh   # один раз: включает защиту main от force-push
-pnpm dev                        # http://localhost:3000
+# 1. Клонировать
+git clone https://github.com/Avalon-27reg/smyslokod-starter.git my-project
+cd my-project
+
+# 2. Включить git-хуки (защита main + блок секретов)
+bash scripts/install-hooks.sh        # macOS / Linux / Git Bash / WSL
+pwsh scripts/install-hooks.ps1       # Windows PowerShell
+
+# 3. Открыть в VS Code
+code .
+
+# 4. В Claude Code вставить промпт из START_HERE.md
 ```
 
-> Windows: вместо `bash scripts/install-hooks.sh` используйте `pwsh scripts/install-hooks.ps1`.
+Дальше Claude задаст 3 коротких вопроса (срок, монетизация, факты про аудиторию) и предложит **режим адаптации**:
 
-Затем:
+- **MINIMAL** (15–30 мин) — лендинг, прототип, гипотеза.
+- **LITE** (45–60 мин) — MVP, стартап на коленке.
+- **FULL** (90–120 мин) — коммерческий продукт с ПДн / платежами / командой.
 
-1. Откройте проект в VS Code.
-2. Откройте [START_HERE.md](./START_HERE.md).
-3. Скопируйте промпт целиком и вставьте в Claude Code.
-4. Ответьте на вопросы агента — шаблон адаптируется.
+Можно переопределить вручную или зайти через shortcut-промпты `docs/prompts/bootstrap-{minimal,lite,full}.md`.
 
 ---
 
-## Структура проекта
+## Что в шаблоне НЕТ кода
 
-```
-smyslokod-starter/
-├── README.md                    # вы здесь
-├── START_HERE.md                # главный промпт для запуска
-├── CLAUDE.md                    # карта проекта для Claude Code
-├── AGENTS.md                    # то же для Codex / других агентов
-├── package.json                 # Next.js + shadcn-ready
-├── src/                         # код приложения
-│   ├── app/                     # App Router
-│   └── lib/utils.ts             # cn() для shadcn/ui
-├── business/                    # «мозг» проекта
-│   ├── INDEX.md                 # карта бизнес-контекста
-│   ├── company/                 # о компании, команде, ценностях
-│   ├── products/                # продукты, цены
-│   ├── audience/                # ЦА, сегменты, возражения, путь
-│   ├── goals/                   # цели — год / квартал / месяц / KPI
-│   ├── economics/               # юнит-экономика, выручка, расходы
-│   ├── marketing/               # каналы, воронка, конкуренты, контент
-│   └── assets/                  # бренд-гайдлайны, отзывы, копи-банк
-├── plans/                       # один план = одна функция
-├── retrospectives/              # итоги после каждой сессии
-├── docs/
-│   ├── architecture/            # архитектура и решения
-│   ├── decisions/               # ADR
-│   ├── deployment/              # Vercel / Railway / Amvera
-│   ├── prompts/                 # готовые промпты на типовые задачи
-│   └── visual-map.md            # три Mermaid-диаграммы
-├── .claude/
-│   ├── settings.json            # permissions deny
-│   ├── rules/                   # правила безопасности, git, UI и т.д.
-│   ├── agents/                  # researcher / architect / critic / qa / ux
-│   └── skills/                  # навыки, например project-bootstrap
-├── .vscode/                     # настройки IDE
-├── .devcontainer/               # безопасная контейнерная среда
-└── scripts/                     # doctor / preflight (sh + ps1)
-```
+Раньше шаблон шёл с заготовкой Next.js. Это ограничивало аудиторию: для Telegram-бота на Python, мобильного приложения, контент-проекта или Python-бэкенда заготовка была лишней.
+
+Теперь стек выбирается на старте — Claude поставит то, что нужно вашему проекту, по запросу. Все правила (UI / деплой / git / безопасность) написаны стек-агностично и применяются к любому стеку, который вы выберете.
 
 ---
 
-## Workflow смысло-кодинга
+## Workflow
 
 ```mermaid
 flowchart LR
-    User[👤 Пользователь]
-    VSCode[VS Code]
-    Claude[🧠 Claude Code]
+    User[Пользователь]
+    Claude[Claude Code]
     Business[business/]
     Plans[plans/]
-    Code[Код src/]
+    Code[Код]
+    Retro[retrospectives/]
     GH[GitHub]
-    Deploy[Vercel / Railway / Amvera]
 
-    User -->|идея| VSCode
-    VSCode --> Claude
+    User -->|идея| Claude
     Claude -->|читает| Business
     Claude -->|создаёт| Plans
-    Plans -->|после критики| Code
+    Plans -->|после Challenge Loop + critic| Code
+    Code -->|Self-Audit + Impact Analysis| Retro
     Code -->|commit| GH
-    GH --> Deploy
 ```
 
-1. Идея → промпт в Claude Code.
-2. Claude читает `CLAUDE.md` и нужные файлы из `business/`.
-3. Создаёт план в `plans/YYYY-MM-DD-название.md`.
-4. Запускается субагент `critic` — ищет 10 причин провала.
-5. После подтверждения — пишется код.
-6. После сессии — запись в `retrospectives/`.
+Цикл одной сессии:
+
+1. `docs/prompts/start-session.md` — войти в контекст, понять что осталось.
+2. Конкретный сценарий: `debug-bug` / `add-tdd-feature` / `grill-idea` / `create-feature-plan`.
+3. `docs/prompts/end-session.md` — обновить план, ретроспектива, бизнес-файлы.
 
 ---
 
-## Команды
+## Готовые промпты (14 штук)
 
-| Команда                | Что делает                              |
-| ---------------------- | --------------------------------------- |
-| `pnpm dev`             | dev-сервер на :3000                     |
-| `pnpm build`           | прод-сборка                             |
-| `pnpm start`           | запуск прод-сборки                      |
-| `pnpm lint`            | next lint                               |
-| `pnpm typecheck`       | tsc --noEmit                            |
-| `pnpm format`          | Prettier write                          |
-| `pnpm preflight`       | lint + build (используйте перед push)  |
-| `scripts/doctor.ps1`   | диагностика окружения (Windows)         |
-| `scripts/doctor.sh`    | диагностика окружения (macOS / Linux)   |
+См. `docs/prompts/INDEX.md`. Группы:
+
+- **Старт нового проекта:** bootstrap-project (auto-detect), bootstrap-minimal, bootstrap-lite, bootstrap-full, create-business-brain.
+- **Каждый день:** start-session, end-session.
+- **По типу задачи:** grill-idea, create-feature-plan, run-critique, add-tdd-feature, debug-bug, visual-review, deploy-project.
 
 ---
 
-## Как адаптировать под свой проект
+## Безопасность
 
-Способ 1 (рекомендуется):
-
-1. Откройте [START_HERE.md](./START_HERE.md).
-2. Вставьте промпт в Claude Code.
-3. Ответьте на 5–10 коротких вопросов.
-4. Claude обновит `business/`, `CLAUDE.md` и создаст первый план.
-
-Способ 2 (вручную):
-
-1. Перепишите [business/INDEX.md](./business/INDEX.md) и файлы внутри.
-2. Перепишите раздел «Что это за проект» в [CLAUDE.md](./CLAUDE.md).
-3. Создайте план: `plans/2026-05-03-первая-фича.md` по `plans/TEMPLATE.md`.
+- Запрет на чтение `.env*` в `.claude/settings.json` (Claude Code не прочитает их даже если попросить).
+- Pre-commit хук блокирует коммит `.env`, `*.pem`, `*.key` и строк, похожих на API-ключи (OpenAI / Anthropic / AWS / GitHub / Google / Slack / JWT).
+- Pre-push хук блокирует force-push и удаление веток `main` / `master`.
+- Правило в CLAUDE.md: никогда не запускать `git push`, `git push --force`, `git reset --hard`, `git rebase`, `rm -rf` без явного «да» от пользователя.
 
 ---
 
 ## Деплой
 
-| Куда        | Когда выбирать                                  | Инструкция                                  |
-| ----------- | ----------------------------------------------- | ------------------------------------------- |
-| **Vercel**  | простой сайт / лендинг / SaaS без RU-данных     | [docs/deployment/vercel.md](./docs/deployment/vercel.md) |
-| **Railway** | международный продукт с бэком и БД              | [docs/deployment/railway.md](./docs/deployment/railway.md) |
-| **Amvera**  | российские пользователи, ПДн, ФЗ-152            | [docs/deployment/amvera.md](./docs/deployment/amvera.md) |
+| Куда | Когда выбирать | Инструкция |
+| --- | --- | --- |
+| **Vercel** | веб-проект без RU-ПДн | `docs/deployment/vercel.md` |
+| **Railway** | международный с бэком и БД | `docs/deployment/railway.md` |
+| **Amvera** | российские пользователи + ФЗ-152 | `docs/deployment/amvera.md` |
 
 Все секреты — только через Environment Variables хостинга, не в репо.
 
 ---
 
-## Откат изменений
+## Лицензия
 
-```bash
-git status                    # что изменилось
-git restore <файл>            # откатить файл
-git reset --soft HEAD~1       # отменить последний коммит, оставить изменения
-git revert <hash>             # безопасный откат уже запушенного коммита
-```
-
-Подробнее — в [.claude/rules/git.md](./.claude/rules/git.md).
+MIT — см. [LICENSE](./LICENSE). Используйте для коммерческих и некоммерческих проектов.
 
 ---
 
 ## Что дальше
 
-- Прочитайте [CLAUDE.md](./CLAUDE.md) — это карта для агента и для вас.
-- Изучите [business/INDEX.md](./business/INDEX.md) — мозг проекта.
-- Запустите `pnpm dev` и откройте [START_HERE.md](./START_HERE.md).
+1. Прочитайте [CLAUDE.md](./CLAUDE.md) — карта для агента и для вас.
+2. Изучите [business/INDEX.md](./business/INDEX.md) — мозг проекта.
+3. Запустите [START_HERE.md](./START_HERE.md) — Claude сам адаптирует шаблон.

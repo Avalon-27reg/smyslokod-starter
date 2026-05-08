@@ -1,45 +1,48 @@
-# Зависимости
-node_modules
-.pnpm-store
-
-# Next.js
-.next
-out
-
-# Сборки
-build
-dist
-
-# Логи
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Окружение и секреты
+# --- Окружение и секреты ---
 .env
 .env.*
 !.env.example
 
-# Платформы деплоя
-.vercel
-.netlify
-
-# IDE
-.idea
-*.swp
-
-# OS
+# --- OS ---
 .DS_Store
 Thumbs.db
 
-# Тесты и кеши
-coverage
-.eslintcache
-.turbo
-*.tsbuildinfo
+# --- IDE ---
+.idea
+*.swp
 
-# Локальные настройки Claude Code (личное)
+# --- Логи ---
+*.log
+
+# --- Локальные настройки Claude Code (личное) ---
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+
+# --- Стек-специфика (пере-зацепится после выбора стека) ---
+# Когда вы выберете стек, добавьте сюда то, что не должно попадать в git.
+# Примеры (раскомментируйте и/или дополните под свой стек):
+#
+# Node / pnpm / Next:
+# node_modules
+# .pnpm-store
+# .next
+# out
+# .turbo
+# *.tsbuildinfo
+# .eslintcache
+#
+# Python:
+# __pycache__
+# *.pyc
+# .venv
+# venv
+# .pytest_cache
+# .mypy_cache
+# .ruff_cache
+# dist
+# build
+# *.egg-info
+#
+# Платформы деплоя:
+# .vercel
+# .netlify

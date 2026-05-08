@@ -1,91 +1,105 @@
 # Архитектура — обзор
 
-Этот документ описывает архитектуру шаблона на старте. После адаптации под конкретный проект — обновите соответствующие разделы.
+Шаблон **стек-агностичный** — конкретная архитектура (язык, фреймворк, БД, авторизация) выбирается на старте через скилл `project-bootstrap` или вручную пользователем. Этот файл становится живым после адаптации: вписываете выбранный стек, структуру папок и принципы вашего проекта.
 
-## Стек
+## Что заполнить после выбора стека
+
+После того как стек выбран, перепишите эти разделы:
+
+### 1. Стек
 
 | Слой | Что выбрано | Почему |
 | ---- | ----------- | ------ |
-| Фреймворк | Next.js 15 (App Router) | RSC, edge-готов, Vercel-friendly, всё из коробки |
-| Язык | TypeScript 5 strict | предотвращает 80% типовых багов |
-| Стили | Tailwind CSS 3 | utility-first, без CSS-файлов |
-| UI-компоненты | shadcn/ui (Radix + Tailwind) | копируются в проект, мы владеем кодом |
-| Иконки | lucide-react | свежий, ESM-friendly, типизирован |
-| Менеджер пакетов | pnpm 10 | быстрый, экономный к диску, надёжный с workspace |
-| Линт | ESLint 9 flat-config + `eslint-config-next` | официальный из коробки |
-| Формат | Prettier + `prettier-plugin-tailwindcss` | сортировка классов |
+| Язык | _<TypeScript / Python / Go / Rust / ...>_ | _<обоснование>_ |
+| Фреймворк | _<Next.js / FastAPI / Django / Express / Vite + React / ...>_ | _<обоснование>_ |
+| Стили (если UI) | _<Tailwind / CSS Modules / styled-components / нативный CSS / ...>_ | _<обоснование>_ |
+| UI-компоненты | _<shadcn/ui / PrimeVue / нативные / ...>_ | _<обоснование>_ |
+| Менеджер пакетов | _<pnpm / npm / pip / poetry / cargo / ...>_ | _<обоснование>_ |
+| Линт | _<ESLint / Ruff / Clippy / ...>_ | _<обоснование>_ |
+| Формат | _<Prettier / Black / rustfmt / ...>_ | _<обоснование>_ |
+| База данных | _<Postgres / SQLite / MongoDB / нет>_ | _<обоснование>_ |
+| Деплой | _<Vercel / Railway / Amvera / VPS / ...>_ | см. `docs/deployment/` |
 
-## Структура папок
+### 2. Структура папок
 
+После выбора стека опишите вашу структуру здесь. Примеры популярных стеков:
+
+**Next.js + Tailwind + shadcn/ui:**
 ```
 src/
-├── app/             # роуты Next.js (App Router)
-│   ├── layout.tsx   # корневой layout (html / body / metadata)
-│   ├── page.tsx     # главная
-│   └── globals.css  # Tailwind + CSS-переменные shadcn
-├── components/      # переиспользуемые компоненты
-│   └── ui/          # компоненты shadcn (после `pnpm dlx shadcn@latest add`)
-└── lib/
-    └── utils.ts     # cn() для shadcn
+├── app/             # App Router
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/ui/   # shadcn компоненты
+└── lib/utils.ts
 ```
 
-## Принципы
-
-### Серверное по умолчанию
-
-В App Router компоненты по умолчанию серверные. Делайте Client Component (`"use client"`) **только если** нужно: state, effects, обработчики, refs, browser API.
-
-### Сегрегация данных и UI
-
-- Запросы к БД / внешним API — в Server Components или Server Actions.
-- UI только отображает.
-- `lib/` — утилиты без зависимости от React.
-
-### Пути
-
-`@/*` → `src/*`. Используйте абсолютные импорты везде.
-
-```tsx
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+**Python (FastAPI):**
+```
+app/
+├── main.py          # точка входа
+├── api/             # роуты
+├── models/          # ORM-модели
+├── services/        # бизнес-логика
+└── tests/
 ```
 
-### Переменные окружения
+**Telegram-бот (aiogram):**
+```
+bot/
+├── main.py
+├── handlers/
+├── states/
+├── keyboards/
+└── services/
+```
 
-- `NEXT_PUBLIC_*` — попадают в браузер. **Только то, что не секрет.**
-- Без префикса — серверные. Доступны только в Server Components / API routes / Server Actions.
+### 3. Принципы (стек-агностичные)
 
-### Изображения
+Эти принципы применимы к любому стеку:
 
-- `<Image>` из `next/image`, не `<img>`.
-- Внешние домены добавляйте в `next.config.ts` `images.remotePatterns`.
+- **Сегрегация данных и UI.** Запросы к БД / внешним API — в одном месте. UI только отображает.
+- **Чистая логика отдельно от I/O.** То, что можно покрыть TDD (см. скилл `tdd`) — должно быть выделено в чистые функции / классы без I/O.
+- **Конфигурация — через env, не через код.** Все секреты, URL, флаги — через переменные окружения.
+- **Один входной слой.** API / контроллеры — тонкие, бизнес-логика — глубже.
+- **Логирование без секретов.** В лог не попадают токены, пароли, ПДн.
 
-## Точки расширения
+### 4. Переменные окружения
 
-Обычно следующие шаги после адаптации:
+В каждом фреймворке своя конвенция «публичных» переменных:
 
-1. Добавить аутентификацию (`next-auth` / `clerk` / собственная).
-2. Добавить БД (`prisma` + Postgres / `drizzle` + Postgres).
-3. Добавить очередь / фоновые задачи (`upstash/qstash`, `bullmq`).
-4. Добавить аналитику (Yandex.Metrika через `next/script`, Plausible, Posthog).
-5. Добавить платежи (yookassa / stripe).
+- **Next.js:** префикс `NEXT_PUBLIC_` — попадает в браузер. Без префикса — серверная.
+- **Vite:** префикс `VITE_` — попадает в браузер.
+- **Create React App:** префикс `REACT_APP_`.
+- **Python/FastAPI / Go / Rust:** все переменные серверные, в браузер ничего не попадает по умолчанию.
 
-Каждое добавление — через **архитектора** (`.claude/agents/architect.md`) и через ADR в `docs/decisions/`.
+**Правило:** всё, что без публичного префикса (или для серверного языка любое) — секрет. Никогда не светить в клиентском коде.
 
-## Mermaid: верхний уровень
+### 5. Точки расширения
+
+Типичные шаги после первой работающей версии:
+
+1. **Аутентификация** — выбор зависит от стека (NextAuth, Clerk, FastAPI-Users, Devise, и т.д.).
+2. **БД** — Postgres + ORM выбранного стека (Prisma, Drizzle, SQLAlchemy, Diesel, ...).
+3. **Очередь / фоновые задачи** — BullMQ, Celery, qstash, RabbitMQ.
+4. **Аналитика** — Yandex.Metrika, Plausible, Posthog.
+5. **Платежи** — Yookassa (RU) / Stripe (международные).
+
+Каждое добавление — через субагент `architect` и через ADR в `docs/decisions/`.
+
+## Mermaid: типовая верхнеуровневая схема
 
 ```mermaid
 flowchart TD
-    Browser[🌐 Браузер]
-    Edge[Next.js Edge / Node runtime]
-    Server[Server Components]
+    Client[Клиент<br/>браузер / mobile / Telegram]
+    App[Приложение<br/>Next.js / FastAPI / aiogram / ...]
+    Logic[Бизнес-логика]
     DB[(База данных)]
-    LLM[LLM API]
-    Pay[Платежи]
+    Ext[Внешние API<br/>LLM / платежи / аналитика]
 
-    Browser <-->|HTTP / RSC payload| Edge
-    Edge --> Server
-    Server -->|SQL / ORM| DB
-    Server -->|HTTPS| LLM
-    Server -->|HTTPS + webhook| Pay
+    Client <-->|HTTP / WebSocket / Bot API| App
+    App --> Logic
+    Logic -->|SQL / ORM| DB
+    Logic -->|HTTPS + webhook| Ext
 ```

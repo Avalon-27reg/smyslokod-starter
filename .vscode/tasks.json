@@ -2,39 +2,8 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "dev",
-      "detail": "Запустить dev-сервер Next.js (http://localhost:3000)",
-      "type": "shell",
-      "command": "pnpm dev",
-      "isBackground": true,
-      "presentation": { "reveal": "always", "panel": "dedicated" },
-      "problemMatcher": []
-    },
-    {
-      "label": "build",
-      "detail": "Собрать прод-версию приложения",
-      "type": "shell",
-      "command": "pnpm build",
-      "presentation": { "reveal": "always" },
-      "problemMatcher": []
-    },
-    {
-      "label": "lint",
-      "detail": "next lint",
-      "type": "shell",
-      "command": "pnpm lint",
-      "problemMatcher": ["$eslint-stylish"]
-    },
-    {
-      "label": "typecheck",
-      "detail": "tsc --noEmit",
-      "type": "shell",
-      "command": "pnpm typecheck",
-      "problemMatcher": ["$tsc"]
-    },
-    {
       "label": "doctor",
-      "detail": "Диагностика окружения",
+      "detail": "Диагностика окружения: git, hooks, методология",
       "type": "shell",
       "windows": { "command": "powershell -ExecutionPolicy Bypass -File scripts/doctor.ps1" },
       "linux":   { "command": "bash scripts/doctor.sh" },
@@ -42,12 +11,12 @@
       "problemMatcher": []
     },
     {
-      "label": "preflight",
-      "detail": "lint + typecheck + build (запускайте перед коммитом / деплоем)",
+      "label": "install-hooks",
+      "detail": "Активировать .githooks/ (pre-push защита main + pre-commit блок секретов)",
       "type": "shell",
-      "windows": { "command": "powershell -ExecutionPolicy Bypass -File scripts/preflight.ps1" },
-      "linux":   { "command": "bash scripts/preflight.sh" },
-      "osx":     { "command": "bash scripts/preflight.sh" },
+      "windows": { "command": "powershell -ExecutionPolicy Bypass -File scripts/install-hooks.ps1" },
+      "linux":   { "command": "bash scripts/install-hooks.sh" },
+      "osx":     { "command": "bash scripts/install-hooks.sh" },
       "problemMatcher": []
     }
   ]

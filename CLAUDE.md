@@ -11,26 +11,27 @@
 
 ## 2. Стек
 
-- Next.js 15 (App Router) + React 19
-- TypeScript 5 strict
-- Tailwind CSS 3 + shadcn/ui (готов к подключению)
-- pnpm 10
-- ESLint 9 (flat config) + Prettier
-- Деплой: Vercel / Railway / Amvera (см. `docs/deployment/`)
+Шаблон **стек-агностичный**. Никакого предустановленного фреймворка / языка нет. Стек выбирается на старте проекта (через скилл `project-bootstrap`) или явно пользователем.
+
+Если этот раздел ещё не переписан под конкретный стек — значит шаблон только что развернули. После выбора пользователем здесь появится конкретика: язык, фреймворк, менеджер пакетов, линтер, деплой.
+
+Поддерживаемые платформы деплоя (документация уже есть): Vercel / Railway / Amvera (см. `docs/deployment/`).
 
 ## 3. Структура репозитория
 
 ```
-src/                    # код приложения (Next.js App Router)
 business/               # «мозг» проекта — бизнес-контекст, читается ВЫБОРОЧНО
 plans/                  # планы фич, один план = одна функция
 retrospectives/         # итог каждой завершённой сессии
 docs/                   # архитектура, ADR, деплой, готовые промпты
 .claude/                # правила, агенты, скиллы для Claude Code
+.githooks/              # pre-push (защита main) + pre-commit (блок секретов)
 .vscode/                # настройки IDE
-.devcontainer/          # безопасная контейнерная среда
-scripts/                # doctor / preflight (sh + ps1)
+.devcontainer/          # контейнерная среда (опционально)
+scripts/                # doctor / install-hooks (sh + ps1)
 ```
+
+После выбора стека пользователем в репо появятся: код приложения (например, `src/`), конфиги стека (например, `package.json`), и обновится `.gitignore`.
 
 ## 4. Работа с business/
 
@@ -76,7 +77,7 @@ scripts/                # doctor / preflight (sh + ps1)
 
 - Не делай «generic AI-design». Сначала спроси/прочитай референсы.
 - Перед версткой — открой `business/assets/brand-guidelines.md`. Если файл пуст — спроси про тон, цвета, шрифты.
-- Используй shadcn/ui компоненты как базу: `pnpm dlx shadcn@latest add <component>`.
+- Если в проекте есть UI-стек (React/Tailwind/shadcn, Vue, Svelte и т.д.) — используй его компонентную базу, не пиши свои стили там, где есть готовое.
 - Проверяй mobile (≤ 640px) и desktop (≥ 1024px). Mobile — приоритет.
 - Подробнее: `.claude/rules/ui-design.md`.
 

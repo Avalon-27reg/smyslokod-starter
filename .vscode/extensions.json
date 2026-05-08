@@ -1,14 +1,9 @@
 {
   "recommendations": [
     "anthropic.claude-code",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
-    "bradlc.vscode-tailwindcss",
-    "Prisma.prisma",
     "eamodio.gitlens",
     "yzhang.markdown-all-in-one",
     "bierner.markdown-mermaid",
-    "ms-playwright.playwright",
     "EditorConfig.EditorConfig",
     "ms-vscode-remote.remote-containers",
     "PKief.material-icon-theme"
