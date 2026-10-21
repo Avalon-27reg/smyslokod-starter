@@ -4,7 +4,7 @@
 Запусти субагент ux-designer (.claude/agents/ux-designer.md) для разбора экрана/макета.
 
 Что нужно сделать:
-1. Открыть business/assets/brand-guidelines.md и business/audience/avatar.md.
+1. Открыть ядро business/INDEX.md и, если они есть, business/assets/brand-guidelines.md и business/audience/avatar.md.
 2. Если я приложил скриншот — внимательно его разобрать.
 3. Если я указал URL — открой через WebFetch и опиши, что увидел.
 4. Пройти по 5 параметрам: иерархия, CTA, копи, тон, доступность.

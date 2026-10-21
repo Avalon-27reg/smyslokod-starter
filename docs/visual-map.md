@@ -52,32 +52,31 @@ journey
       Привёл друга: 5: Пользователь
 ```
 
-## 3. Workflow Claude Code
+## 3. Процесс работы
+
+Процесс общий для Claude Code и Codex, подробно - `docs/workflow.md`.
 
 ```mermaid
 flowchart TD
-    Idea[💡 Идея пользователя]
-    StartHere[START_HERE.md]
-    CC[🧠 Claude Code]
-    ReadCLAUDE[Читает CLAUDE.md]
-    ReadBusiness[Читает business/<br/>выборочно по INDEX.md]
-    Plan[Создаёт план в plans/]
-    Critic[Запускает critic]
-    Wait{Утверждено?}
-    Implement[Реализация<br/>одного шага]
-    Retro[Запись в<br/>retrospectives/]
-    Update[Обновляет business/<br/>если узнал новое]
+    Start[С чем пришёл пользователь:<br/>нет идеи / идея / архитектура / код]
+    Cont[Продолжаем:<br/>сверить checkpoint с файлами]
+    Privacy[Проверка приватности<br/>до записи business/]
+    Core[Ядро business/INDEX.md<br/>разделы по мере данных]
+    Plan[План результата в plans/]
+    Review[Ревью по риску<br/>и судья]
+    OK{Пользователь<br/>одобрил?}
+    Phase[Фаза: тест до кода, код,<br/>проверки стека, Self-Audit]
+    PhaseReview[Независимое ревью diff<br/>и судья]
+    CP[Checkpoint в плане]
+    Stop[Стоп: лимит, блокер,<br/>нужно отдельное «да»]
+    Gate[4 пункта перед push]
+    Done[Итоговая приёмка<br/>и ретроспектива]
 
-    Idea --> StartHere
-    StartHere --> CC
-    CC --> ReadCLAUDE
-    ReadCLAUDE --> ReadBusiness
-    ReadBusiness --> Plan
-    Plan --> Critic
-    Critic --> Wait
-    Wait -- Нет --> Plan
-    Wait -- Да --> Implement
-    Implement --> Retro
-    Retro --> Update
-    Update --> Idea
+    Start --> Privacy --> Core --> Plan --> Review --> OK
+    OK -- правки --> Plan
+    OK -- да --> Phase --> PhaseReview --> CP
+    CP -- следующая фаза --> Phase
+    CP -. пауза .-> Cont --> Phase
+    Phase -. лимит или блокер .-> Stop
+    CP -- все фазы --> Gate --> Done
 ```

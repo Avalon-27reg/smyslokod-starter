@@ -1,3 +1,14 @@
+---
+paths:
+  - "**/Dockerfile*"
+  - "**/docker-compose*.{yml,yaml}"
+  - "**/{vercel,railway,netlify}.{json,toml}"
+  - "**/{amvera,fly}.{yml,yaml,toml}"
+  - "**/Procfile"
+  - ".github/workflows/**"
+  - "docs/deployment/**"
+---
+
 # Правила деплоя
 
 ## Выбор платформы
@@ -17,7 +28,7 @@
 ## Жёсткие правила
 
 1. **Все секреты — только через Environment Variables хостинга.** Не в репо. Не в коде. Не в build-args.
-2. **Перед прод-деплоем — прогон проверок выбранного стека.** Минимум: тесты + линтер + сборка. Если хоть что-то падает — не деплоим. Конкретная команда зависит от стека (например, `pnpm lint && pnpm build` для Node, `ruff check . && pytest` для Python, `cargo test && cargo build --release` для Rust).
+2. **Перед прод-деплоем - вердикт по 4 пунктам из `docs/workflow.md` (раздел 7) и прогон проверок выбранного стека.** Минимум: тесты + линтер + сборка. Если хоть что-то падает - не деплоим. Конкретная команда зависит от стека (например, `pnpm lint && pnpm build` для Node, `ruff check . && pytest` для Python, `cargo test && cargo build --release` для Rust).
 3. **Сначала preview, потом production.** Vercel/Railway сами создают preview-деплои на pull request — пользуйся.
 4. **Не делай прод-деплой в пятницу вечером и в ночь** без явной причины. Ставь deploy lock на это время если есть аналитика инцидентов.
 5. **После деплоя — проверь.** Открой главную, проверь основной user-flow, проверь логи на ошибки.

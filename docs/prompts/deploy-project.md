@@ -4,7 +4,8 @@
 Помоги задеплоить проект. Алгоритм:
 
 1. Прочитай .claude/rules/deployment.md и docs/deployment/{vercel,railway,amvera}.md.
-2. Спроси у меня платформу (Vercel / Railway / Amvera) если она ещё не указана в business/products/overview.md.
+   Перед деплоем дай вердикт по 4 пунктам из docs/workflow.md (раздел 7). Хоть один НЕ ПРОВЕРЕНО или НЕ ПРОХОДИТ - деплой не начинаем.
+2. Спроси у меня платформу (Vercel / Railway / Amvera) если она ещё не указана в разделе 2 CLAUDE.md.
 3. Проведи меня по чек-листу из docs/deployment/<платформа>.md:
    - все ли env-переменные есть в .env.example,
    - проходят ли проверки выбранного стека (тесты + линтер + сборка). Команды зависят от стека: pnpm для Node, pytest+ruff для Python, cargo для Rust и т.д.,
