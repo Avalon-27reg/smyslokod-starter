@@ -45,7 +45,11 @@ check_path "AGENTS.md" "AGENTS.md"
 check_path "START_HERE.md" "START_HERE.md"
 check_path "README.md" "README.md"
 check_path "LICENSE" "LICENSE"
-check_path "business/INDEX.md" "business/INDEX.md"
+if [ ! -e "business/INDEX.md" ] && [ -f .gitignore ] && tr -d '\r' < .gitignore | grep -qx '/business/'; then
+  printf "  ${YELLOW}!${RESET} business/INDEX.md нет, а /business/ в .gitignore - восстановите business/ из своей копии или создайте ядро из templates/business/INDEX.md\n"; warn=$((warn+1))
+else
+  check_path "business/INDEX.md" "business/INDEX.md"
+fi
 check_path "plans/TEMPLATE.md" "plans/TEMPLATE.md"
 check_path "retrospectives/TEMPLATE.md" "retrospectives/TEMPLATE.md"
 check_path ".claude/settings.json" ".claude/settings.json"
@@ -53,6 +57,14 @@ check_path ".claude/rules/" ".claude/rules"
 check_path ".claude/agents/" ".claude/agents"
 check_path ".claude/skills/" ".claude/skills"
 check_path "docs/prompts/INDEX.md" "docs/prompts/INDEX.md"
+check_path "docs/workflow.md" "docs/workflow.md"
+check_path "templates/business/" "templates/business"
+check_path "CONTEXT.md" "CONTEXT.md"
+if grep -q '^@docs/workflow.md' CLAUDE.md 2>/dev/null; then
+  printf "  ${GREEN}✓${RESET} CLAUDE.md подключает docs/workflow.md\n"; ok=$((ok+1))
+else
+  printf "  ${RED}✗${RESET} в CLAUDE.md нет строки @docs/workflow.md - Claude Code не загрузит процесс\n"; fail=$((fail+1))
+fi
 
 echo ""
 echo "▸ Git-хуки"
@@ -84,7 +96,7 @@ elif [ -f "Cargo.toml" ]; then
 elif [ -f "go.mod" ]; then
   printf "  ${GREEN}i${RESET} Go-стек найден\n"
 else
-  printf "  ${YELLOW}i${RESET} Стек ещё не выбран — запустите bootstrap из START_HERE.md\n"
+  printf "  ${YELLOW}i${RESET} Стек ещё не выбран - напишите агенту, с чем пришли (START_HERE.md)\n"
 fi
 
 echo ""
